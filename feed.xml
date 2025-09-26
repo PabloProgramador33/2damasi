@@ -3,7 +3,7 @@
     <title>PabloWEB</title>
     <link href="https://PabloProgramador33.github.io/2damasi/feed.xml" rel="self" />
     <link href="https://PabloProgramador33.github.io/2damasi" />
-    <updated>2025-09-26T14:47:23+02:00</updated>
+    <updated>2025-09-26T14:48:58+02:00</updated>
     <author>
         <name>Pablo Pérez Martínez</name>
     </author>
@@ -169,7 +169,8 @@
 <p data-start="2550" data-end="2617">Usar filtros antiphishing en el correo electrónico y navegadores.</p>
 </li>
 </ul>
-<figure class="post__image post__image--center"><strong data-start="2619" data-end="2633">Conclusión</strong><br data-start="2633" data-end="2636">El phishing se basa en la confianza del usuario, por lo que la educación y la precaución son la mejor defensa contra este tipo de ataques.<br><img loading="lazy"  src="https://www.bbva.com/wp-content/uploads/2018/10/Portada-Phishing.jpg" alt="Dos términos: Phishing y smishing, ¿qué son y cómo evitarlos?" width="375" height="282" data-is-external-image="true"></figure>
+<p class="align-left" data-start="2619" data-end="2776"><strong data-start="2619" data-end="2633">Conclusión</strong><br data-start="2633" data-end="2636">El phishing se basa en la confianza del usuario, por lo que la educación y la precaución son la mejor defensa contra este tipo de ataques.</p>
+<figure class="post__image post__image--center"><br><img loading="lazy"  src="https://www.bbva.com/wp-content/uploads/2018/10/Portada-Phishing.jpg" alt="Dos términos: Phishing y smishing, ¿qué son y cómo evitarlos?" width="375" height="282" data-is-external-image="true"></figure>
             ]]>
         </content>
     </entry>
