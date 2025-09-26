@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
-    <title>2damasi</title>
+    <title>PabloWEB</title>
     <link href="https://PabloProgramador33.github.io/2damasi/feed.xml" rel="self" />
     <link href="https://PabloProgramador33.github.io/2damasi" />
-    <updated>2025-09-25T21:48:03+02:00</updated>
+    <updated>2025-09-26T11:12:34+02:00</updated>
     <author>
         <name>Pablo Pérez Martínez</name>
     </author>
@@ -20,21 +20,13 @@
         <updated>2025-09-25T21:48:03+02:00</updated>
             <summary>
                 <![CDATA[
-                    Bienvenido a mi primer artículo Esta es una lista de ejemplo: Y aquí una imagen de muestra: También se puede poner HTML: Elemento en lista&hellip;
+                    Bienvenido a mi primer artículo Mi primer artículo en mi espacio personal ¡Hola! Soy Pablo, estudiante de Desarrollo de Aplicaciones Multiplataforma (DAM) y apasionado de&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                 <h2 id="bienvenido-a-mi-primer-artículo">Bienvenido a mi primer artículo</h2>
-<p>Esta es una lista de ejemplo:</p><ul>
-<li>Elemento 1</li>
-<li>Elemento 2</li>
-<li>Elemento 3</li>
-</ul>
-<p>Y aquí una imagen de muestra:</p><figure class="post__image"><img loading="lazy" src="/media/foto1.jpg" alt="Imagen de ejemplo" data-is-external-image="true"></figure><p>También se puede poner HTML:</p><ul>
-  <li>Elemento en lista HTML</li>
-  <li>Otro elemento</li>
-</ul>
+<p>Mi primer artículo en mi espacio personal</p><p>¡Hola! Soy Pablo, estudiante de Desarrollo de Aplicaciones Multiplataforma (DAM) y apasionado de la ciberseguridad. En este espacio voy a compartir todo lo que estoy aprendiendo y creando.</p><p>Cosas en las que estoy trabajando:</p><p>Desarrollo de aplicaciones móviles y web.</p><p>Proyectos de ciberseguridad y hacking ético.</p><p>Creación de apps con inteligencia artificial.</p><p>Mejoras en interfaces y experiencia de usuario.</p><p>Próximos proyectos</p><p>Una app que recomienda lugares y planes según tu ubicación.</p><p>Una herramienta para ayudar a desconectarse de redes sociales.</p><p>Proyectos de práctica de seguridad informática y redes.</p><p>Aquí una imagen de mi último proyecto:</p><p>También se puede usar HTML para listas más personalizadas:</p><ul> <li>Aprender nuevas tecnologías y frameworks</li> <li>Documentar mis avances y prácticas</li> <li>Compartir trucos y consejos con la comunidad</li> </ul>
 
 
             ]]>
