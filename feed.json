@@ -11,18 +11,18 @@
     },
     "items": [
         {
-            "id": "https://PabloProgramador33.github.io/2damasi/mi-primer-articulo.html",
-            "url": "https://PabloProgramador33.github.io/2damasi/mi-primer-articulo.html",
+            "id": "https://PabloProgramador33.github.io/2damasi/mi-primer-articulo/",
+            "url": "https://PabloProgramador33.github.io/2damasi/mi-primer-articulo/",
             "title": "Mi primer artículo.",
             "summary": "Bienvenido a mi primer artículo Mi primer artículo en mi espacio personal ¡Hola! Soy Pablo, estudiante de Desarrollo de Aplicaciones Multiplataforma (DAM) y apasionado de&hellip;",
-            "content_html": "<h2 id=\"bienvenido-a-mi-primer-artículo\">Bienvenido a mi primer artículo</h2>\n<p>Mi primer artículo en mi espacio personal</p><p>¡Hola! Soy Pablo, estudiante de Desarrollo de Aplicaciones Multiplataforma (DAM) y apasionado de la ciberseguridad. En este espacio voy a compartir todo lo que estoy aprendiendo y creando.</p><p>Cosas en las que estoy trabajando:</p><p>Desarrollo de aplicaciones móviles y web.</p><p>Proyectos de ciberseguridad y hacking ético.</p><p>Creación de apps con inteligencia artificial.</p><p>Mejoras en interfaces y experiencia de usuario.</p><p>Próximos proyectos</p><p>Una app que recomienda lugares y planes según tu ubicación.</p><p>Una herramienta para ayudar a desconectarse de redes sociales.</p><p>Proyectos de práctica de seguridad informática y redes.</p><p>Aquí una imagen de mi último proyecto:</p><p>También se puede usar HTML para listas más personalizadas:</p><ul> <li>Aprender nuevas tecnologías y frameworks</li> <li>Documentar mis avances y prácticas</li> <li>Compartir trucos y consejos con la comunidad</li> </ul>\n\n",
+            "content_html": "<h2 id=\"bienvenido-a-mi-primer-artículo\">Bienvenido a mi primer artículo</h2>\n<p>Mi primer artículo en mi espacio personal</p><p>¡Hola! Soy Pablo, estudiante de Desarrollo de Aplicaciones Multiplataforma (DAM) y apasionado de la ciberseguridad. En este espacio voy a compartir todo lo que estoy aprendiendo y creando.</p><p>Cosas en las que estoy trabajando:</p><p>Desarrollo de aplicaciones móviles y web.</p><p>Proyectos de ciberseguridad y hacking ético.</p><p>Creación de apps con inteligencia artificial.</p><p>Mejoras en interfaces y experiencia de usuario.</p><p>Próximos proyectos</p><p>Una app que recomienda lugares y planes según tu ubicación.</p><p>Una herramienta para ayudar a desconectarse de redes sociales.</p><p>Proyectos de práctica de seguridad informática y redes.</p><p>Aquí una imagen de mi último proyecto:</p><p>También se puede usar HTML para listas más personalizadas:</p><ul> <li>Aprender nuevas tecnologías y frameworks</li> <li>Documentar mis avances y prácticas</li> <li>Compartir trucos y consejos con la comunidad</li> </ul>\n\n<img loading=\"lazy\" src=\"/media/proyecto1.jpg\" alt=\"Mi proyecto en desarrollo\" width=\"500\" data-is-external-image=\"true\">\n\n",
             "author": {
                 "name": "Pablo Pérez Martínez"
             },
             "tags": [
             ],
             "date_published": "2025-09-25T21:48:03+02:00",
-            "date_modified": "2025-09-26T11:12:34+02:00"
+            "date_modified": "2025-09-26T11:21:46+02:00"
         }
     ]
 }

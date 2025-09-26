@@ -3,7 +3,7 @@
     <title>PabloWEB</title>
     <link href="https://PabloProgramador33.github.io/2damasi/feed.xml" rel="self" />
     <link href="https://PabloProgramador33.github.io/2damasi" />
-    <updated>2025-09-26T11:12:34+02:00</updated>
+    <updated>2025-09-26T11:21:46+02:00</updated>
     <author>
         <name>Pablo Pérez Martínez</name>
     </author>
@@ -14,8 +14,8 @@
         <author>
             <name>Pablo Pérez Martínez</name>
         </author>
-        <link href="https://PabloProgramador33.github.io/2damasi/mi-primer-articulo.html"/>
-        <id>https://PabloProgramador33.github.io/2damasi/mi-primer-articulo.html</id>
+        <link href="https://PabloProgramador33.github.io/2damasi/mi-primer-articulo/"/>
+        <id>https://PabloProgramador33.github.io/2damasi/mi-primer-articulo/</id>
 
         <updated>2025-09-25T21:48:03+02:00</updated>
             <summary>
@@ -27,6 +27,8 @@
             <![CDATA[
                 <h2 id="bienvenido-a-mi-primer-artículo">Bienvenido a mi primer artículo</h2>
 <p>Mi primer artículo en mi espacio personal</p><p>¡Hola! Soy Pablo, estudiante de Desarrollo de Aplicaciones Multiplataforma (DAM) y apasionado de la ciberseguridad. En este espacio voy a compartir todo lo que estoy aprendiendo y creando.</p><p>Cosas en las que estoy trabajando:</p><p>Desarrollo de aplicaciones móviles y web.</p><p>Proyectos de ciberseguridad y hacking ético.</p><p>Creación de apps con inteligencia artificial.</p><p>Mejoras en interfaces y experiencia de usuario.</p><p>Próximos proyectos</p><p>Una app que recomienda lugares y planes según tu ubicación.</p><p>Una herramienta para ayudar a desconectarse de redes sociales.</p><p>Proyectos de práctica de seguridad informática y redes.</p><p>Aquí una imagen de mi último proyecto:</p><p>También se puede usar HTML para listas más personalizadas:</p><ul> <li>Aprender nuevas tecnologías y frameworks</li> <li>Documentar mis avances y prácticas</li> <li>Compartir trucos y consejos con la comunidad</li> </ul>
+
+<img loading="lazy" src="/media/proyecto1.jpg" alt="Mi proyecto en desarrollo" width="500" data-is-external-image="true">
 
 
             ]]>
