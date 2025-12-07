@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark LLM - UI Limpia</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; 
+            background-color: #f0f2f5; 
+            color: #1e293b;
+        }
+        
+        /* Estilos personalizados */
+        .glass-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .metric-tab {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .metric-tab.active {
+            background-color: #eff6ff; /* blue-50 */
+            color: #2563eb; /* blue-600 */
+            border-color: #bfdbfe;
+            font-weight: 600;
+        }
+        
+        .metric-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 3px;
+            background-color: #2563eb;
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Checkbox personalizado */
+        .custom-checkbox:checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        /* Scrollbar fina */
+        .thin-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
+        .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+        .thin-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* Animación de entrada */
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Header Minimalista -->
+    <header class="bg-white border-b border-gray-200 px-6 py-3 flex-none flex items-center justify-between z-30">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-2 rounded-lg shadow-sm">
+                <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-slate-800 leading-none">LLM Benchmark</h1>
+                <p class="text-xs text-slate-500 mt-1">Comparativa de Modelos IA</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+            <div class="hidden sm:flex gap-2">
+                <button onclick="exportCSV()" class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-gray-200 hover:bg-slate-50 rounded-md transition-colors shadow-sm">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> CSV
+                </button>
+                <button onclick="resetApp()" class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-gray-200 hover:bg-slate-50 rounded-md transition-colors shadow-sm">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <!-- Sidebar de Filtros (Izquierda) -->
+        <aside id="sidebar" class="w-72 bg-white border-r border-gray-200 flex-none overflow-y-auto thin-scroll flex flex-col transform transition-transform duration-300 absolute lg:relative z-20 h-full -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none">
+            
+            <div class="p-5 border-b border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Configuración</h2>
+                    <button onclick="toggleSidebar()" class="lg:hidden text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <p class="text-sm text-slate-500">Selecciona qué comparar.</p>
+            </div>
+
+            <!-- Sección: Modelos -->
+            <div class="p-5 border-b border-gray-100">
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                    <i data-lucide="box" class="w-4 h-4 text-indigo-500"></i> Modelos
+                </h3>
+                <div id="models-list" class="space-y-2">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+
+            <!-- Sección: Tests -->
+            <div class="p-5">
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                    <i data-lucide="flask-conical" class="w-4 h-4 text-emerald-500"></i> Tests
+                </h3>
+                <div id="tests-list" class="space-y-1">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+
+            <!-- Footer Sidebar -->
+            <div class="mt-auto p-4 bg-slate-50 border-t border-gray-200 text-[10px] text-slate-400 text-center">
+                Datos cargados desde JSON estático
+            </div>
+        </aside>
+
+        <!-- Overlay Móvil -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/20 z-10 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+        <!-- Área Principal (Derecha) -->
+        <main class="flex-1 flex flex-col min-w-0 bg-[#f8fafc] overflow-hidden">
+            
+            <!-- Barra de Métricas (Pestañas Superiores) -->
+            <div class="bg-white border-b border-gray-200 px-4 pt-2 flex-none shadow-sm z-10">
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Métrica Activa</span>
+                    
+                    <!-- Switch de Modo (Test vs Modelo) -->
+                    <div class="flex bg-slate-100 p-0.5 rounded-lg">
+                        <button onclick="setMode('byTest')" id="mode-test" class="px-3 py-1 text-xs font-medium rounded-md transition-all shadow-sm bg-white text-indigo-600">Por Test</button>
+                        <button onclick="setMode('byModel')" id="mode-model" class="px-3 py-1 text-xs font-medium rounded-md transition-all text-slate-500 hover:text-slate-700">Por Modelo</button>
+                    </div>
+                </div>
+
+                <!-- Scroll horizontal de pestañas -->
+                <div class="flex gap-2 overflow-x-auto thin-scroll pb-0 hide-scrollbar" id="metrics-tabs">
+                    <!-- JS Injected Tabs -->
+                </div>
+            </div>
+
+            <!-- Contenedor del Gráfico -->
+            <div class="flex-1 p-4 sm:p-6 overflow-y-auto">
+                
+                <!-- Tarjeta Principal del Gráfico -->
+                <div class="glass-panel rounded-xl p-1 h-full flex flex-col bg-white relative">
+                    
+                    <!-- Header interno del gráfico -->
+                    <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-xl">
+                        <div>
+                            <h2 id="chart-title" class="text-lg font-bold text-slate-800">Velocidad de Respuesta</h2>
+                            <p id="chart-subtitle" class="text-sm text-slate-500">Comparando tokens por segundo</p>
+                        </div>
+                        <div class="flex gap-2">
+                             <button onclick="exportPNG()" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" title="Guardar Gráfica">
+                                <i data-lucide="camera" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- El Gráfico -->
+                    <div class="flex-1 w-full min-h-[300px] bg-white p-2" id="chart-div"></div>
+
+                    <!-- Panel de Estadísticas (Footer del Gráfico) -->
+                    <div class="border-t border-gray-100 bg-slate-50/50 p-4 rounded-b-xl">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="stats-panel">
+                            <!-- JS Injected Stats -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CONFIGURACIÓN Y DATOS
+        // ==========================================
+        const rawData = {
+          "models": ["Granite", "Qwen", "Gemma"],
+          "tests": {
+            "performance_100tok": { "label":"Rendimiento (100 tok)", "group": "Básico" },
+            "cost_hour_infer": { "label":"Coste/Hora (60s)", "group": "Costes" },
+            "cost_million": { "label":"Coste 1M Tokens", "group": "Costes" },
+            "puzzle_hotel": { "label":"Puzzle: Hotel", "group": "Lógica" },
+            "puzzle_hats": { "label":"Puzzle: Sombreros", "group": "Lógica" },
+            "puzzle_farmer": { "label":"Puzzle: Granjero", "group": "Lógica" }
+          },
+          // Aplanamos la estructura de datos para facilitar el acceso
+          "data": {
+            "performance_100tok": {
+                "Granite": {"RAM":4.40,"CPU":5.60,"TOK_SEC":67.79,"TOKENS":255,"FIRST_TOKEN":0.61},
+                "Qwen":    {"RAM":4.10,"CPU":5.89,"TOK_SEC":97.97,"TOKENS":543,"FIRST_TOKEN":0.54},
+                "Gemma":   {"RAM":4.77,"CPU":8.76,"TOK_SEC":39.60,"TOKENS":209,"FIRST_TOKEN":0.93}
+            },
+            "cost_hour_infer": {
+                "Granite": {"RAM":4.73,"CPU":8.25,"TOK_SEC":97.80,"TOKENS":377,"FIRST_TOKEN":0.55},
+                "Qwen":    {"RAM":4.39,"CPU":8.41,"TOK_SEC":67.75,"TOKENS":256,"FIRST_TOKEN":0.63},
+                "Gemma":   {"RAM":4.78,"CPU":8.50,"TOK_SEC":39.28,"TOKENS":499,"FIRST_TOKEN":0.86}
+            },
+            "cost_million": {
+                "Granite": {"RAM":4.41,"CPU":8.30,"TOK_SEC":63.46,"TOKENS":1023,"FIRST_TOKEN":0.38},
+                "Qwen":    {"RAM":2.73,"CPU":8.33,"TOK_SEC":null,"TOKENS":null,"FIRST_TOKEN":null},
+                "Gemma":   {"RAM":4.78,"CPU":8.27,"TOK_SEC":38.99,"TOKENS":1363,"FIRST_TOKEN":1.40}
+            },
+            "puzzle_hotel": {
+                "Granite": {"RAM":4.42,"CPU":7.99,"TOK_SEC":67.27,"TOKENS":482,"FIRST_TOKEN":0.15},
+                "Qwen":    {"RAM":2.72,"CPU":8.27,"TOK_SEC":72.20,"TOKENS":602,"FIRST_TOKEN":0.20},
+                "Gemma":   {"RAM":4.79,"CPU":8.18,"TOK_SEC":38.98,"TOKENS":718,"FIRST_TOKEN":0.93}
+            },
+            "puzzle_hats": {
+                "Granite": {"RAM":4.39,"CPU":8.04,"TOK_SEC":65.58,"TOKENS":693,"FIRST_TOKEN":0.42},
+                "Qwen":    {"RAM":2.72,"CPU":8.57,"TOK_SEC":60.20,"TOKENS":804,"FIRST_TOKEN":0.60},
+                "Gemma":   {"RAM":4.78,"CPU":8.28,"TOK_SEC":39.44,"TOKENS":738,"FIRST_TOKEN":0.23}
+            },
+            "puzzle_farmer": {
+                "Granite": {"RAM":4.41,"CPU":8.53,"TOK_SEC":64.70,"TOKENS":794,"FIRST_TOKEN":0.21},
+                "Qwen":    {"RAM":2.73,"CPU":6.11,"TOK_SEC":70.10,"TOKENS":850,"FIRST_TOKEN":0.80},
+                "Gemma":   {"RAM":4.78,"CPU":8.29,"TOK_SEC":39.29,"TOKENS":548,"FIRST_TOKEN":0.14}
+            }
+          }
+        };
+
+        const COLORS = { 
+            'Granite': '#6366f1', // Indigo 500
+            'Qwen': '#10b981',    // Emerald 500
+            'Gemma': '#f43f5e'    // Rose 500
+        };
+
+        const METRICS_CONFIG = [
+            { id: 'TOK_SEC', label: 'Velocidad (Tok/s)', icon: 'zap', desc: 'Tokens generados por segundo. Más es mejor.' },
+            { id: 'FIRST_TOKEN', label: 'Latencia 1er Token', icon: 'timer', desc: 'Tiempo de espera inicial (segundos). Menos es mejor.' },
+            { id: 'RAM', label: 'Consumo RAM (GB)', icon: 'memory-stick', desc: 'Memoria utilizada durante la inferencia.' },
+            { id: 'CPU', label: 'Uso CPU (%)', icon: 'cpu', desc: 'Porcentaje de carga del procesador.' },
+            { id: 'TOKENS', label: 'Total Tokens', icon: 'file-text', desc: 'Cantidad total de tokens procesados.' }
+        ];
+
+        // Estado Global
+        let state = {
+            models: [...rawData.models],
+            tests: Object.keys(rawData.tests),
+            activeMetric: 'TOK_SEC', // SOLO UNA métrica activa a la vez
+            mode: 'byTest' // 'byTest' | 'byModel'
+        };
+
+        // ==========================================
+        // 2. INICIALIZACIÓN UI
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSidebar();
+            renderMetricTabs();
+            updateDashboard();
+            lucide.createIcons();
+        });
+
+        function renderSidebar() {
+            // Modelos
+            const modelsContainer = document.getElementById('models-list');
+            rawData.models.forEach(model => {
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer";
+                div.innerHTML = `
+                    <input type="checkbox" id="m-${model}" value="${model}" checked 
+                        class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 custom-checkbox cursor-pointer">
+                    <label for="m-${model}" class="flex-1 flex items-center gap-2 cursor-pointer text-sm text-slate-700 font-medium">
+                        <span class="w-2 h-2 rounded-full" style="background-color: ${COLORS[model]}"></span>
+                        ${model}
+                    </label>
+                `;
+                div.querySelector('input').addEventListener('change', handleFilterChange);
+                // Permitir clic en todo el div
+                div.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        const cb = div.querySelector('input');
+                        cb.checked = !cb.checked;
+                        handleFilterChange();
+                    }
+                });
+                modelsContainer.appendChild(div);
+            });
+
+            // Tests (Agrupados)
+            const testsContainer = document.getElementById('tests-list');
+            const groups = {};
+            
+            Object.entries(rawData.tests).forEach(([key, meta]) => {
+                if (!groups[meta.group]) groups[meta.group] = [];
+                groups[meta.group].push({ key, label: meta.label });
+            });
+
+            Object.entries(groups).forEach(([groupName, tests]) => {
+                // Cabecera Grupo
+                const header = document.createElement('div');
+                header.className = "px-2 mt-4 mb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider";
+                header.textContent = groupName;
+                testsContainer.appendChild(header);
+
+                tests.forEach(test => {
+                    const div = document.createElement('div');
+                    div.className = "flex items-start gap-3 p-1.5 hover:bg-slate-50 rounded transition-colors cursor-pointer";
+                    div.innerHTML = `
+                        <input type="checkbox" id="t-${test.key}" value="${test.key}" checked 
+                            class="mt-0.5 w-3.5 h-3.5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500 custom-checkbox cursor-pointer">
+                        <label for="t-${test.key}" class="flex-1 cursor-pointer text-xs text-slate-600 leading-snug">
+                            ${test.label}
+                        </label>
+                    `;
+                    div.querySelector('input').addEventListener('change', handleFilterChange);
+                    div.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT') {
+                            const cb = div.querySelector('input');
+                            cb.checked = !cb.checked;
+                            handleFilterChange();
+                        }
+                    });
+                    testsContainer.appendChild(div);
+                });
+            });
+        }
+
+        function renderMetricTabs() {
+            const tabsContainer = document.getElementById('metrics-tabs');
+            tabsContainer.innerHTML = '';
+            
+            METRICS_CONFIG.forEach(metric => {
+                const btn = document.createElement('button');
+                btn.className = `metric-tab flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-indigo-600 hover:bg-slate-50 whitespace-nowrap ${state.activeMetric === metric.id ? 'active' : ''}`;
+                btn.onclick = () => setActiveMetric(metric.id);
+                btn.innerHTML = `
+                    <i data-lucide="${metric.icon}" class="w-4 h-4"></i>
+                    ${metric.label}
+                `;
+                tabsContainer.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // 3. LÓGICA DE ACTUALIZACIÓN
+        // ==========================================
+
+        function handleFilterChange() {
+            // Leer estado del DOM
+            state.models = Array.from(document.querySelectorAll('#models-list input:checked')).map(cb => cb.value);
+            state.tests = Array.from(document.querySelectorAll('#tests-list input:checked')).map(cb => cb.value);
+            updateDashboard();
+        }
+
+        function setActiveMetric(metricId) {
+            state.activeMetric = metricId;
+            renderMetricTabs(); // Re-render para actualizar clases 'active'
+            updateDashboard();
+        }
+
+        function setMode(mode) {
+            state.mode = mode;
+            
+            // Actualizar botones de modo visualmente
+            const btnTest = document.getElementById('mode-test');
+            const btnModel = document.getElementById('mode-model');
+            
+            if (mode === 'byTest') {
+                btnTest.className = "px-3 py-1 text-xs font-medium rounded-md transition-all shadow-sm bg-white text-indigo-600";
+                btnModel.className = "px-3 py-1 text-xs font-medium rounded-md transition-all text-slate-500 hover:text-slate-700";
+            } else {
+                btnModel.className = "px-3 py-1 text-xs font-medium rounded-md transition-all shadow-sm bg-white text-indigo-600";
+                btnTest.className = "px-3 py-1 text-xs font-medium rounded-md transition-all text-slate-500 hover:text-slate-700";
+            }
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            // 1. Actualizar Textos
+            const currentMetricConfig = METRICS_CONFIG.find(m => m.id === state.activeMetric);
+            document.getElementById('chart-title').textContent = currentMetricConfig.label;
+            document.getElementById('chart-subtitle').textContent = currentMetricConfig.desc;
+
+            // 2. Verificar datos vacíos
+            const chartDiv = document.getElementById('chart-div');
+            if (state.models.length === 0 || state.tests.length === 0) {
+                chartDiv.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-slate-400 gap-3 fade-in">
+                        <div class="p-4 bg-slate-50 rounded-full">
+                            <i data-lucide="filter" class="w-8 h-8"></i>
+                        </div>
+                        <p class="text-sm">Selecciona al menos un modelo y un test.</p>
+                    </div>`;
+                lucide.createIcons();
+                document.getElementById('stats-panel').innerHTML = '';
+                return;
+            }
+
+            // 3. Preparar Datos para Plotly
+            const traces = [];
+            const activeMetric = state.activeMetric;
+            let allValues = []; // Para estadísticas
+
+            if (state.mode === 'byTest') {
+                // Eje X: Tests. Series: Modelos.
+                state.models.forEach(model => {
+                    const x = [];
+                    const y = [];
+                    const hoverText = [];
+
+                    state.tests.forEach(testKey => {
+                        const val = rawData.data[testKey][model][activeMetric];
+                        if (val !== null) allValues.push(val);
+                        
+                        x.push(rawData.tests[testKey].label); // Label corto
+                        y.push(val);
+                        hoverText.push(`<b>${model}</b><br>${rawData.tests[testKey].label}<br>Valor: ${val !== null ? val : 'N/A'}`);
+                    });
+
+                    traces.push({
+                        x: x, y: y,
+                        name: model,
+                        type: 'bar',
+                        marker: { color: COLORS[model], opacity: 0.9 },
+                        hovertemplate: '%{hovertext}<extra></extra>',
+                        hovertext: hoverText,
+                        text: y.map(v => v !== null ? v : ''),
+                        textposition: 'auto',
+                        textfont: { size: 10, color: 'white' }
+                    });
+                });
+            } else {
+                // Eje X: Modelos. Series: Tests.
+                state.tests.forEach(testKey => {
+                    const x = [];
+                    const y = [];
+                    const hoverText = [];
+                    const testLabel = rawData.tests[testKey].label;
+
+                    state.models.forEach(model => {
+                        const val = rawData.data[testKey][model][activeMetric];
+                        if (val !== null) allValues.push(val);
+                        
+                        x.push(model);
+                        y.push(val);
+                        hoverText.push(`<b>${testLabel}</b><br>Modelo: ${model}<br>Valor: ${val !== null ? val : 'N/A'}`);
+                    });
+
+                    traces.push({
+                        x: x, y: y,
+                        name: testLabel,
+                        type: 'bar',
+                        hovertemplate: '%{hovertext}<extra></extra>',
+                        hovertext: hoverText
+                    });
+                });
+            }
+
+            // 4. Renderizar Gráfico
+            const layout = {
+                barmode: 'group',
+                margin: { t: 20, r: 20, l: 40, b: 60 }, // Más espacio abajo para etiquetas
+                font: { family: 'Plus Jakarta Sans, sans-serif', color: '#64748b' },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                showlegend: true,
+                legend: { orientation: 'h', y: -0.2, xanchor: 'center', x: 0.5 },
+                xaxis: { 
+                    tickangle: -15, // Ligera inclinación para leer mejor
+                    gridcolor: '#f1f5f9',
+                    zeroline: false
+                },
+                yaxis: { 
+                    gridcolor: '#e2e8f0',
+                    zerolinecolor: '#cbd5e1'
+                },
+                hoverlabel: { bgcolor: "#fff", bordercolor: "#e2e8f0", font: { family: "Plus Jakarta Sans", color: "#334155" } }
+            };
+
+            const config = { responsive: true, displayModeBar: false };
+            Plotly.newPlot('chart-div', traces, layout, config);
+
+            // 5. Calcular y Renderizar Estadísticas
+            calculateStats(allValues, currentMetricConfig);
+        }
+
+        function calculateStats(values, metricConfig) {
+            const container = document.getElementById('stats-panel');
+            if (values.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const sum = values.reduce((a, b) => a + b, 0);
+            const avg = (sum / values.length).toFixed(2);
+            const min = Math.min(...values).toFixed(2);
+            const max = Math.max(...values).toFixed(2);
+
+            const cards = [
+                { label: 'Promedio', value: avg, color: 'text-indigo-600', sub: 'Media de selección' },
+                { label: 'Máximo', value: max, color: 'text-emerald-600', sub: 'Mejor rendimiento' },
+                { label: 'Mínimo', value: min, color: 'text-rose-600', sub: 'Peor rendimiento' }
+            ];
+
+            container.innerHTML = cards.map(card => `
+                <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between fade-in">
+                    <div>
+                        <p class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">${card.label}</p>
+                        <p class="text-xl font-bold ${card.color}">${card.value}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-slate-400">${metricConfig.id.split('_')[0]}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // 4. UTILIDADES
+        // ==========================================
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function resetApp() {
+            // Reset filtros visuales
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            state.activeMetric = 'TOK_SEC';
+            state.mode = 'byTest';
+            
+            // Sync UI elements
+            setMode('byTest');
+            renderMetricTabs();
+            handleFilterChange(); // Updates chart
+        }
+
+        function exportPNG() {
+            Plotly.downloadImage('chart-div', {
+                format: 'png', 
+                width: 1200, 
+                height: 600, 
+                filename: `benchmark_${state.activeMetric}`
+            });
+        }
+        
+        function exportCSV() {
+            // Lógica simple de exportación para la métrica activa
+            let csv = "Model,Test,Value\n";
+            state.models.forEach(model => {
+                state.tests.forEach(testKey => {
+                    const val = rawData.data[testKey][model][state.activeMetric];
+                    csv += `${model},"${rawData.tests[testKey].label}",${val}\n`;
+                });
+            });
+            const link = document.createElement("a");
+            link.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+            link.download = `data_${state.activeMetric}.csv`;
+            link.click();
+        }
+
+    </script>
+</body>
+</html>
